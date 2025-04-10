@@ -2,7 +2,7 @@ import 'dotenv/config'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import sendResponse from '../helpers/sendResponse.js';
-import { loginSchema, registerSchema } from '../validation.js/authvalidation.js';
+import { loginSchema, signupSchema } from '../validation.js/authvalidation.js';
 import User from '../models/auth.js';
 import express from 'express';
 import { authenticationAdmin } from '../midelewear/authentication.js';
@@ -10,7 +10,7 @@ import { authenticationAdmin } from '../midelewear/authentication.js';
 const router = express.Router()
 
 router.post("/register", async (req, res) => {
-    const { error, value } = registerSchema.validate(req.body);
+    const { error, value } = signupSchema.validate(req.body);
     if (error) return sendResponse(res, 400, null, true, error.message)
     const user = await User.findOne({ email: value.email })
     if (user) return sendResponse(res, 403, null, true, "User With This Email already Exist")
@@ -23,7 +23,6 @@ router.post("/register", async (req, res) => {
 
 
 router.post("/login", async (req, res) => {
-    console.log("req.User==>", req.user)
     const { error, value } = loginSchema.validate(req.body);
     if (error) return sendResponse(res, 400, null, true, error.message)
     const user = await User.findOne({ email: value.email }).lean()

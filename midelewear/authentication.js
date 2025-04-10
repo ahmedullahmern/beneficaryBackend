@@ -44,3 +44,23 @@ export async function authenticationAdmin(req, res, next) {
         return sendResponse(res, 500, null, true, "SomeThing Went Worng")
     }
 }
+
+export async function authenticationReceptionist(req, res, next) {
+    try {
+        const bearerToken = req?.headers?.authorization
+        console.log("TOKEN MISSONG==>",req?.headers?.authorization)
+        if (!bearerToken) return sendResponse(res, 403, null, true, "Token not Provide")
+
+        const token = bearerToken?.split(" ")[1]
+        const decoded = jwt.verify(token, process.env.AUTH_SECRET)
+        req.user = decoded
+        console.log("decodde==>",decoded)
+        if (decoded.role == "Receptionist") {
+            next()
+        } else {
+            return sendResponse(res, 403, null, true, "Receptionist Only allewd to access")
+        }
+    } catch (error) {
+        return sendResponse(res, 500, null, true, "SomeThing Went Worng")
+    }
+}
