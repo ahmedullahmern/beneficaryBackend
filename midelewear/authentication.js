@@ -28,13 +28,13 @@ export async function authenticationUser(req, res, next) {
 export async function authenticationAdmin(req, res, next) {
     try {
         const bearerToken = req?.headers?.authorization
-        console.log("TOKEN MISSONG==>",req?.headers?.authorization)
+        console.log("TOKEN MISSONG==>", req?.headers?.authorization)
         if (!bearerToken) return sendResponse(res, 403, null, true, "Token not Provide")
 
         const token = bearerToken?.split(" ")[1]
         const decoded = jwt.verify(token, process.env.AUTH_SECRET)
         req.user = decoded
-        console.log("decodde==>",decoded)
+        console.log("decodde==>", decoded)
         if (decoded.role == "admin") {
             next()
         } else {
@@ -47,20 +47,21 @@ export async function authenticationAdmin(req, res, next) {
 
 export async function authenticationReceptionist(req, res, next) {
     try {
+        console.log("req.headersee==>", req.headers.authorization)
         const bearerToken = req?.headers?.authorization
-        console.log("TOKEN MISSONG==>",req?.headers?.authorization)
+        console.log("TOKEN MISSONG==>", req?.headers?.authorization)
         if (!bearerToken) return sendResponse(res, 403, null, true, "Token not Provide")
-
-        const token = bearerToken?.split(" ")[1]
+            const token = bearerToken?.split(" ")[1]
+        console.log("4HI BERAER TOKEN==>",bearerToken)
         const decoded = jwt.verify(token, process.env.AUTH_SECRET)
         req.user = decoded
-        console.log("decodde==>",decoded)
-        if (decoded.role == "Receptionist") {
+        console.log("hidecodde==>", decoded)
+        if (decoded.role == "receptionist") {
             next()
         } else {
             return sendResponse(res, 403, null, true, "Receptionist Only allewd to access")
         }
     } catch (error) {
-        return sendResponse(res, 500, null, true, "SomeThing Went Worng")
+        return sendResponse(res, 500, null, true, `SomeThing Went Worng${error}`)
     }
 }
