@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 import sendResponse from '../helpers/sendResponse.js';
 import express from 'express';
 import Seeker from '../models/regester.js';
-import { seekerRegisterSchema } from '../validation.js/seekerSchema.js';
+import { seekerRegisterSchema } from '../validation/seekerSchema.js';
 import { authenticationReceptionist } from '../midelewear/authentication.js';
 
 const router = express.Router()

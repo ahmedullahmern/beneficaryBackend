@@ -2,10 +2,10 @@ import 'dotenv/config'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken';
 import sendResponse from '../helpers/sendResponse.js';
-import { loginSchema, signupSchema } from '../validation/authvalidation.js';
 import User from '../models/auth.js';
 import express from 'express';
 import { authenticationAdmin } from '../midelewear/authentication.js';
+import { loginSchema, signupSchema } from '../validation/authValidation.js';
 
 const router = express.Router()
 
