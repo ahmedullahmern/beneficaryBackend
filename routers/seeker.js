@@ -6,7 +6,7 @@ import sendResponse from '../helpers/sendResponse.js';
 import express from 'express';
 import Seeker from '../models/regester.js';
 import { seekerRegisterSchema } from '../validation/seekerSchema.js';
-import { authenticationReceptionist } from '../midelewear/authentication.js';
+import { authenticationDepartment, authenticationReceptionist } from '../midelewear/authentication.js';
 
 const router = express.Router()
 
@@ -57,20 +57,35 @@ router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
         let newUser = new Seeker({ ...value });
         newUser = await newUser.save();
 
+
         const token = jwt.sign(
             { cnic: newUser.cnic, id: newUser._id },
             process.env.AUTH_SECRET,
         );
 
-        const qrData = `http://192.168.10.2:4000/${newUser._id}`;
+        const qrData = `https://beneficary-backend.vercel.app/seeker/${newUser._id}`;
         const qrCodeImage = await QRCode.toDataURL(qrData);
 
-        return sendResponse(res, 201, { newUser, token, qrCodeImage }, false, "User registered successfully");
+        return sendResponse(res, 201, { newUser, qrCodeImage, token }, false, "User registered successfully");
 
     } catch (err) {
         return sendResponse(res, 500, null, true, "Server error while registering user" + err);
     }
 });
+
+
+router.get("/seeker/:id", authenticationDepartment, async (req, res) => {
+    const seeker = await Seeker.findById(req.params.id);
+    if (!seeker) return sendResponse(res, 404, null, true, "Seeker not found");
+    return sendResponse(res, 200, seeker, false, "Seeker found");
+});
+
+router.put("/seeker/:id/status", authenticationDepartment, async (req, res) => {
+    const { status } = req.body;
+    const seeker = await Seeker.findByIdAndUpdate(req.params.id, { status }, { new: true });
+    return sendResponse(res, 200, seeker, false, "Status updated successfully");
+  });
+  
 
 
 

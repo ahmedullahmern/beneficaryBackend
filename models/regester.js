@@ -8,6 +8,11 @@ const seekerSchema = new Schema({
     phone: { type: String, required: true },
     address: { type: String, required: true },
     purposes: { type: String, required: true },
+    status: {
+        type: String,
+        enum: ['pending', 'inprocess', 'completed', 'rejected'],
+        default: 'pending'
+    },
 }, { timestamps: true });
 
 const Seeker = mongoose.model("Seeker", seekerSchema);
