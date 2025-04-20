@@ -4,9 +4,9 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt'
 import sendResponse from '../helpers/sendResponse.js';
 import express from 'express';
-import Seeker from '../models/regester.js';
 import { seekerRegisterSchema } from '../validation/seekerSchema.js';
-import { authenticationDepartment, authenticationReceptionist } from '../midelewear/authentication.js';
+import { authenticationAdmin, authenticationDepartment, authenticationReceptionist } from '../midelewear/authentication.js';
+import Seeker from '../models/register.js';
 
 const router = express.Router()
 
@@ -81,11 +81,28 @@ router.get("/seeker/:id", authenticationDepartment, async (req, res) => {
 });
 
 router.put("/seeker/:id/status", authenticationDepartment, async (req, res) => {
-    const { status } = req.body;
-    const seeker = await Seeker.findByIdAndUpdate(req.params.id, { status }, { new: true });
-    return sendResponse(res, 200, seeker, false, "Status updated successfully");
-  });
-  
+    try {
+        const { status } = req.body;
+        const seeker = await Seeker.findByIdAndUpdate(
+            req.params.id,
+            { status },
+            { new: true, runValidators: true }
+        );
+        return sendResponse(res, 200, seeker, false, "Status updated successfully");
+    } catch (error) {
+        return sendResponse(res, 400, null, true, error.message);
+    }
+});
+
+
+router.get("/admin/reports", authenticationAdmin, async (req, res) => {
+    const totalSeekers = await Seeker.countDocuments();
+    const completed = await Seeker.countDocuments({ status: "completed" });
+    const pending = await Seeker.countDocuments({ status: "pending" });
+    const inprocess = await Seeker.countDocuments({ status: "inprocess" });
+    return sendResponse(res, 200, { totalSeekers, inprocess, completed, pending }, false, "Report generated");
+});
+
 
 
 
