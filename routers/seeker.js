@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt'
 import sendResponse from '../helpers/sendResponse.js';
 import express from 'express';
 import { seekerRegisterSchema } from '../validation/seekerSchema.js';
-import { authenticationAdmin, authenticationDepartment, authenticationReceptionist } from '../midelewear/authentication.js';
+import { authenticationAdmin, authenticationDepartment, authenticationReceptionist, authenticationUser } from '../midelewear/authentication.js';
 import Seeker from '../models/register.js';
 
 const router = express.Router()
@@ -104,6 +104,32 @@ router.get("/admin/reports", authenticationAdmin, async (req, res) => {
 });
 
 
+router.get("/seeker/status/:cnic", authenticationUser, async (req, res) => {
+    try {
+        const cnic = req.params.cnic;
 
+        if (!cnic) {
+            return sendResponse(res, 400, null, true, "CNIC required");
+        }
+
+        const seeker = await Seeker.findOne({ cnic });
+
+        if (!seeker) {
+            return sendResponse(res, 404, null, true, "Seeker not found");
+        }
+
+        return sendResponse(res, 200, {
+            name: seeker.name,
+            cnic: seeker.cnic,
+            status: seeker.status,
+            tokenNumber: seeker.tokenNumber,
+            department: seeker.department,
+        }, false, "Seeker data fetched");
+
+    } catch (err) {
+        return sendResponse(res, 500, null, true, "Server error"+err);
+    }
+}
+)
 
 export default router

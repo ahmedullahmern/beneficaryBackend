@@ -15,7 +15,11 @@ export async function authenticationUser(req, res, next) {
                 return sendResponse(res, 403, null, true, "User Not Found")
             }
             req.user = decoded
-            next()
+            if (decoded.role == "beneficiary") {
+                next()
+            } else {
+                return sendResponse(res, 403, null, true, "beneficiary Only allewd to access")
+            }
         } else {
             return sendResponse(res, 500, null, true, "SomeThing Went Worng")
         }
@@ -52,8 +56,8 @@ export async function authenticationReceptionist(req, res, next) {
         const bearerToken = req?.headers?.authorization
         console.log("TOKEN MISSONG==>", req?.headers?.authorization)
         if (!bearerToken) return sendResponse(res, 403, null, true, "Token not Provide")
-            const token = bearerToken?.split(" ")[1]
-        console.log("4HI BERAER TOKEN==>",bearerToken)
+        const token = bearerToken?.split(" ")[1]
+        console.log("4HI BERAER TOKEN==>", bearerToken)
         const decoded = jwt.verify(token, process.env.AUTH_SECRET)
         req.user = decoded
         console.log("hidecodde==>", decoded)
@@ -74,8 +78,8 @@ export async function authenticationDepartment(req, res, next) {
         const bearerToken = req?.headers?.authorization
         console.log("TOKEN MISSONG==>", req?.headers?.authorization)
         if (!bearerToken) return sendResponse(res, 403, null, true, "Token not Provide")
-            const token = bearerToken?.split(" ")[1]
-        console.log("4HI BERAER TOKEN==>",bearerToken)
+        const token = bearerToken?.split(" ")[1]
+        console.log("4HI BERAER TOKEN==>", bearerToken)
         const decoded = jwt.verify(token, process.env.AUTH_SECRET)
         req.user = decoded
         console.log("hidecodde==>", decoded)
@@ -88,3 +92,4 @@ export async function authenticationDepartment(req, res, next) {
         return sendResponse(res, 500, null, true, `SomeThing Went Worng${error}`)
     }
 }
+
