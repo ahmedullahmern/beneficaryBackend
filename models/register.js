@@ -7,8 +7,11 @@ const seekerSchema = new Schema({
     name: { type: String, required: true },
     phone: { type: String, required: true },
     address: { type: String, required: true },
-    purposes: { type: String, required: true },
-    status: {
+    purpose: {
+        type: String,
+        required: [true, "Purpose is required"],
+        enum: ['Medical', 'Education', 'Meat', 'Food', 'Shelter'], // optional: agar fixed list hai
+    }, status: {
         type: String,
         enum: ['pending', 'inprocess', 'completed', 'rejected'],
         default: 'pending'
