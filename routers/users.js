@@ -2,11 +2,11 @@ import express from 'express';
 import 'dotenv/config';
 import jwt from 'jsonwebtoken';
 import sendResponse from '../helpers/sendResponse.js';
-import { authenticationUser } from '../midelewear/authentication.js';
+import { anyAuthMiddleware, authenticationUser } from '../midelewear/authentication.js';
 import User from '../models/auth.js';
 const router = express.Router()
 
-router.get("/myInfo", authenticationUser, async (req, res) => {
+router.get("/myInfo", anyAuthMiddleware, async (req, res) => {
     try {
         const user = await User.findOne({
             _id: req.user._id

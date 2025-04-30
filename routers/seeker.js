@@ -53,6 +53,10 @@ router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
         if (existingUser) {
             return sendResponse(res, 409, null, true, "CNIC already registered. Please use a unique CNIC.");
         }
+        const existingEmail = await Seeker.findOne({ email: value.email });
+        if (existingEmail) {
+            return sendResponse(res, 409, null, true, "Email already registered. Please use a unique Email.");
+        }
 
         let newUser = new Seeker({ ...value });
         newUser = await newUser.save();

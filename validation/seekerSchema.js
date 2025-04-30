@@ -24,7 +24,7 @@ export const seekerRegisterSchema = Joi.object({
         'any.required': 'Address is required.'
     }),
 
-    purposes: Joi.string().required().messages({
+    purpose: Joi.string().required().messages({
         'string.base': 'Purpose must be a string.',
         'any.required': 'Purpose is required.'
     })
