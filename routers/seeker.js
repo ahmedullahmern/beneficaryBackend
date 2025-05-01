@@ -78,6 +78,13 @@ router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
 });
 
 
+router.get("/seekerDownload/:id", authenticationReceptionist, async (req, res) => {
+    const seeker = await Seeker.findById(req.params.id);
+    console.log("seekerMbandhkiya==>", seeker)
+    if (!seeker) return sendResponse(res, 404, null, true, "Seeker not found");
+    return sendResponse(res, 200, seeker, false, "Seeker found");
+});
+
 router.get("/seeker/:id", authenticationDepartment, async (req, res) => {
     const seeker = await Seeker.findById(req.params.id);
     if (!seeker) return sendResponse(res, 404, null, true, "Seeker not found");
@@ -131,7 +138,7 @@ router.get("/seeker/status/:cnic", authenticationUser, async (req, res) => {
         }, false, "Seeker data fetched");
 
     } catch (err) {
-        return sendResponse(res, 500, null, true, "Server error"+err);
+        return sendResponse(res, 500, null, true, "Server error" + err);
     }
 }
 )
