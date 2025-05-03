@@ -7,9 +7,9 @@ import express from 'express';
 import { seekerRegisterSchema } from '../validation/seekerSchema.js';
 import { authenticationAdmin, authenticationDepartment, authenticationReceptionist, authenticationUser } from '../midelewear/authentication.js';
 import Seeker from '../models/register.js';
+import cloudinary from "../helpers/cloudinary.js";
 
 const router = express.Router()
-
 
 // router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
 //     const { error, value } = seekerRegisterSchema.validate(req.body);
@@ -61,16 +61,24 @@ router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
         let newUser = new Seeker({ ...value });
         newUser = await newUser.save();
 
+        const qrData = `https://beneficary-backend.vercel.app/seeker/${newUser._id}`;
+        const qrCodeImage = await QRCode.toDataURL(qrData);
+
+        const uploaded = await cloudinary.uploader.upload(qrCodeImage, {
+            folder: "qr-codes",
+            quality: "auto",
+            fetch_format: "auto",
+        });
+
+
+        newUser.qrCodeUrl = uploaded.secure_url;
+        await newUser.save();
 
         const token = jwt.sign(
             { cnic: newUser.cnic, id: newUser._id },
             process.env.AUTH_SECRET,
         );
-
-        const qrData = `https://beneficary-backend.vercel.app/seeker/${newUser._id}`;
-        const qrCodeImage = await QRCode.toDataURL(qrData);
-
-        return sendResponse(res, 201, { newUser, qrCodeImage, token }, false, "User registered successfully");
+        return sendResponse(res, 201, { newUser, qrImageUrl: uploaded.secure_url, token }, false, "User registered successfully");
 
     } catch (err) {
         return sendResponse(res, 500, null, true, "Server error while registering user" + err);

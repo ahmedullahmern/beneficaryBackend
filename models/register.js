@@ -16,6 +16,7 @@ const seekerSchema = new Schema({
         enum: ['pending', 'inprocess', 'completed', 'rejected'],
         default: 'pending'
     },
+    qrCodeUrl: { type: String },
 }, { timestamps: true });
 
 const Seeker = mongoose.model("Seeker", seekerSchema);
