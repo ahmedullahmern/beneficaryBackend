@@ -17,6 +17,7 @@ const seekerSchema = new Schema({
         default: 'pending'
     },
     qrCodeUrl: { type: String },
+    tokenNumber: { type: String, },
 }, { timestamps: true });
 
 const Seeker = mongoose.model("Seeker", seekerSchema);

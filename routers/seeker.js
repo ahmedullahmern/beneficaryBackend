@@ -58,7 +58,10 @@ router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
             return sendResponse(res, 409, null, true, "Email already registered. Please use a unique Email.");
         }
 
-        let newUser = new Seeker({ ...value });
+        const seekerCount = await Seeker.countDocuments();
+        const tokenNumber = `TKN-${seekerCount + 1}`;
+
+        let newUser = new Seeker({ ...value, tokenNumber: tokenNumber, });
         newUser = await newUser.save();
 
         const qrData = `https://beneficary-backend.vercel.app/seeker/${newUser._id}`;
@@ -74,11 +77,10 @@ router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
         newUser.qrCodeUrl = uploaded.secure_url;
         await newUser.save();
 
-        const token = jwt.sign(
-            { cnic: newUser.cnic, id: newUser._id },
-            process.env.AUTH_SECRET,
-        );
-        return sendResponse(res, 201, { newUser, qrImageUrl: uploaded.secure_url, token }, false, "User registered successfully");
+
+        return sendResponse(res, 201, {
+            newUser, qrImageUrl: uploaded.secure_url, tokenNumber,
+        }, false, "User registered successfully");
 
     } catch (err) {
         return sendResponse(res, 500, null, true, "Server error while registering user" + err);
