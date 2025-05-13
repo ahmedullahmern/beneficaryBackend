@@ -11,6 +11,7 @@ import cloudinary from "../helpers/cloudinary.js";
 
 const router = express.Router()
 
+
 // router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
 //     const { error, value } = seekerRegisterSchema.validate(req.body);
 //     if (error) return sendResponse(res, 400, null, true, error.message);
