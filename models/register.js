@@ -10,10 +10,10 @@ const seekerSchema = new Schema({
     purpose: {
         type: String,
         required: [true, "Purpose is required"],
-        enum: ['Medical', 'Education', 'Meat', 'Food', 'Shelter'], // optional: agar fixed list hai
+        enum: ['medical', 'education', 'meat', 'food', 'shelter'], // optional: agar fixed list hai
     }, status: {
         type: String,
-        enum: ['pending', 'inprocess', 'completed', 'rejected'],
+        enum: ['pending', 'inprocess', 'completed'],
         default: 'pending'
     },
     qrCodeUrl: { type: String },

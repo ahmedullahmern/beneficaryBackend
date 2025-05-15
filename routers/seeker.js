@@ -12,38 +12,6 @@ import cloudinary from "../helpers/cloudinary.js";
 const router = express.Router()
 
 
-// router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
-//     const { error, value } = seekerRegisterSchema.validate(req.body);
-//     if (error) return sendResponse(res, 400, null, true, error.message);
-
-//     try {
-//         let seeker = await Seeker.findOne({ cnic: value.cnic });
-
-//         if (seeker) {
-//             const newPurposes = value.purposes.filter(p => !seeker.purposes.includes(p));
-//             if (newPurposes.length > 0) {
-//                 seeker.purposes.push(...newPurposes);
-//                 await seeker.save();
-//             }
-//         } else {
-//             seeker = new Seeker({ ...value });
-//             await seeker.save();
-//         }
-
-//         const token = jwt.sign(
-//             { cnic: seeker.cnic, id: seeker._id },
-//             process.env.AUTH_SECRET,
-//         );
-
-//         // const qrData = `http://localhost:4000/${seeker._id}`;
-//         // const qrCodeImage = await QRCode.toDataURL(qrData);
-
-//         return sendResponse(res, 200, { seeker, token, qrCodeImage }, false, "Seeker processed successfully");
-//     } catch (err) {
-//         return sendResponse(res, 500, null, true, "Server error while processing seeker: " + err);
-//     }
-// });
-
 
 router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
     const { error, value } = seekerRegisterSchema.validate(req.body);
@@ -62,7 +30,7 @@ router.post("/seekerRegister", authenticationReceptionist, async (req, res) => {
         const seekerCount = await Seeker.countDocuments();
         const tokenNumber = `TKN-${seekerCount + 1}`;
 
-        let newUser = new Seeker({ ...value, tokenNumber: tokenNumber, });
+        let newUser = new Seeker({ ...value, tokenNumber: tokenNumber, purpose: value.purpose.toLowerCase(), });
         newUser = await newUser.save();
 
         const qrData = `https://beneficary-backend.vercel.app/seeker/${newUser._id}`;
@@ -100,6 +68,7 @@ router.get("/seekerDownload/:id", authenticationReceptionist, async (req, res) =
 router.get("/:dept/seekers", authenticationDepartment, async (req, res) => {
     const { dept } = req.params;
     const seekers = await Seeker.find({ purpose: dept });
+    console.log("seekerBackend==>",seekers)
     res.status(200).json({ data: seekers });
 });
 
