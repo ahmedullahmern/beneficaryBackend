@@ -68,7 +68,7 @@ router.get("/seekerDownload/:id", authenticationReceptionist, async (req, res) =
 router.get("/:dept/seekers", authenticationDepartment, async (req, res) => {
     const { dept } = req.params;
     const seekers = await Seeker.find({ purpose: dept });
-    console.log("seekerBackend==>",seekers)
+    console.log("seekerBackend==>", seekers)
     res.status(200).json({ data: seekers });
 });
 
@@ -124,6 +124,27 @@ router.get("/seeker/status/:cnic", authenticationUser, async (req, res) => {
             tokenNumber: seeker.tokenNumber,
             department: seeker.department,
         }, false, "Seeker data fetched");
+
+    } catch (err) {
+        return sendResponse(res, 500, null, true, "Server error" + err);
+    }
+}
+)
+router.get("/seeker/status/:cnic", authenticationUser, async (req, res) => {
+    try {
+        const cnic = req.params.cnic;
+
+        if (!cnic) {
+            return sendResponse(res, 400, null, true, "CNIC required");
+        }
+
+        const seeker = await Seeker.findOne({ cnic });
+
+        if (!seeker) {
+            return sendResponse(res, 404, null, true, "Seeker not found");
+        }
+
+        return sendResponse(res, 200, seeker, false, "Seeker data fetched");
 
     } catch (err) {
         return sendResponse(res, 500, null, true, "Server error" + err);

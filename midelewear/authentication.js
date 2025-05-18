@@ -47,7 +47,7 @@ export async function authenticationUser(req, res, next) {
             return sendResponse(res, 500, null, true, "SomeThing Went Worng")
         }
     } catch (error) {
-        return sendResponse(res, 500, null, true, "error.message in middleweare AuthenticationUser")
+        return sendResponse(res, 500, null, true, error.message + "error.message in middleweare AuthenticationUser")
     }
 }
 
