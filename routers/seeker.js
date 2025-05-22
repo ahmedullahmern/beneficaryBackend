@@ -139,7 +139,7 @@ router.get("/seeker/status/:cnic", authenticationUser, async (req, res) => {
         }
 
         const seeker = await Seeker.findOne({ cnic });
-
+        console.log("Backend MSeeker Seekre==>", seeker)
         if (!seeker) {
             return sendResponse(res, 404, null, true, "Seeker not found");
         }
