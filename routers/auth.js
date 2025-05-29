@@ -5,9 +5,21 @@ import sendResponse from '../helpers/sendResponse.js';
 import User from '../models/auth.js';
 import express from 'express';
 import { authenticationAdmin } from '../midelewear/authentication.js';
-import { loginSchema, signupSchema } from '../validation/authValidation.js';
+import { CreateStaffSchema, loginSchema, signupSchema } from '../validation/authValidation.js';
 
 const router = express.Router()
+
+router.post("/register/admin", authenticationAdmin, async (req, res) => {
+    const { error, value } = CreateStaffSchema.validate(req.body);
+    if (error) return sendResponse(res, 400, null, true, error.message)
+    const user = await User.findOne({ email: value.email })
+    if (user) return sendResponse(res, 403, null, true, "User With This Email already Exist")
+    const hashedPassword = await bcrypt.hash(value.password, 12)
+    value.password = hashedPassword;
+    let newUser = new User({ ...value });
+    newUser = await newUser.save()
+    sendResponse(res, 201, newUser, false, "User Register successfully")
+})
 
 router.post("/register", async (req, res) => {
     const { error, value } = signupSchema.validate(req.body);
