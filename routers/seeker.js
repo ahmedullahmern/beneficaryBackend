@@ -64,7 +64,6 @@ router.get("/seekerDownload/:id", authenticationReceptionist, async (req, res) =
     return sendResponse(res, 200, seeker, false, "Seeker found");
 });
 
-// GET /department/:dept/seekers
 router.get("/:dept/seekers", authenticationDepartment, async (req, res) => {
     const { dept } = req.params;
     const seekers = await Seeker.find({ purpose: dept });
